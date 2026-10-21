@@ -31,6 +31,9 @@ function parseOptions(raw: Partial<LabOptions> | undefined): LabOptions {
     };
 }
 
+const KEY_HELP =
+    'ຍັງບໍ່ໄດ້ຕັ້ງ OPENROUTER_API_KEY — ເປີດໄຟລ໌ .env ແລ້ວປ່ຽນ sk-or-... ເປັນ key ແທ້ຈາກ https://openrouter.ai/keys ຈາກນັ້ນ restart pnpm dev (Lab 1 ໃຊ້ໄດ້ໂດຍບໍ່ຕ້ອງມີ key)';
+
 function fail(error: string, status: number) {
     return Response.json({ ok: false, error } satisfies LabResponse, { status });
 }
@@ -48,8 +51,9 @@ export async function POST(request: Request) {
     }
     const mode = body.mode as LabMode;
     // Lab 1 ເຮັດໃນເຄື່ອງທັງໝົດ — ຕັ້ງແຕ່ Lab 2 ຈຶ່ງເອີ້ນ embedding/LLM ຜ່ານ OpenRouter
-    if (mode !== 'chunking' && !process.env.OPENROUTER_API_KEY) {
-        return fail('ບໍ່ພົບ OPENROUTER_API_KEY — cp .env.example .env ແລ້ວໃສ່ key ຈາກນັ້ນ restart pnpm dev', 500);
+    const apiKey = process.env.OPENROUTER_API_KEY ?? '';
+    if (mode !== 'chunking' && (!apiKey || apiKey === 'sk-or-...')) {
+        return fail(KEY_HELP, 500);
     }
     const input = typeof body.input === 'string' ? body.input.trim() : '';
     if (input.length > MAX_INPUT_LENGTH) {
@@ -66,6 +70,10 @@ export async function POST(request: Request) {
     } catch (error) {
         console.error(`❌ [/api/lab] mode=${mode}`, error);
         const message = error instanceof Error ? error.message : String(error);
+        // 401 = OpenRouter ປະຕິເສດ key (ຜິດ, ໝົດອາຍຸ ຫຼື ຖືກລຶບ)
+        if (/\b401\b/.test(message)) {
+            return fail(`OpenRouter ປະຕິເສດ API key (401) — ກວດ OPENROUTER_API_KEY ໃນ .env ວ່າຖືກຕ້ອງ ແລ້ວ restart pnpm dev`, 500);
+        }
         return fail(`ເກີດຂໍ້ຜິດພາດ: ${message}`, 500);
     }
 }

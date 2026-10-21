@@ -70,7 +70,7 @@ export const LABS: LabInfo[] = [
             'ຖ້າໂນດບຸກຫາຍ ຕ້ອງເຮັດແນວໃດ?',
             'ບໍລິສັດມີໂບນັດທ້າຍປີບໍ່?',
         ],
-        tips: ['ຖາມສິ່ງທີ່ບໍ່ມີໃນເອກະສານ → ເບິ່ງ transform ວົນ', 'ຕັ້ງ maxRetries = 0 ແລ້ວຖາມຄືນ', 'ທຽບກັບ graph ຈິງໃນ graph/workflow.ts ຂອງ Langchang-chatbot'],
+        tips: ['ຖາມສິ່ງທີ່ບໍ່ມີໃນເອກະສານ → ເບິ່ງ transform ວົນ', 'ຕັ້ງ maxRetries = 0 ແລ້ວຖາມຄືນ'],
     },
 ];
 
