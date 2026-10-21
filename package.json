@@ -6,9 +6,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "lab:1": "node --env-file=.env labs/01-chunking.ts",
+    "lab:2": "node --env-file=.env labs/02-embeddings.ts",
+    "lab:3": "node --env-file=.env labs/03-vector-search.ts",
+    "lab:4": "node --env-file=.env labs/04-rag-chain.ts",
+    "lab:5": "node --env-file=.env labs/05-crag-graph.ts",
+    "typecheck:labs": "tsc -p labs"
   },
   "dependencies": {
+    "@langchain/classic": "^1.0.54",
+    "@langchain/core": "^1.2.20",
+    "@langchain/langgraph": "^1.5.1",
+    "@langchain/openai": "^1.6.3",
+    "@langchain/textsplitters": "^1.0.2",
     "next": "16.4.2",
     "react": "19.3.0",
     "react-dom": "19.3.0"
