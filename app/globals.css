@@ -1,26 +1,52 @@
 @import "tailwindcss";
 
+/* ສີຊຸດດຽວກັບ slides ຂອງ workshop */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f5ef;
+  --foreground: #14213d;
+  --card: #fffdf8;
+  --line: #ddd6c6;
+  --muted: #4a5568;
+  --accent: #b5541a;
+  --accent-soft: #f6e3d3;
+  --primary: #14213d;
+  --on-primary: #f7f5ef;
+  --subtle: #ece8de;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f1729;
+    --foreground: #e8ecf3;
+    --card: #17223a;
+    --line: #2a3756;
+    --muted: #9aa6bc;
+    --accent: #f2a65a;
+    --accent-soft: #3a2c22;
+    --primary: #f2a65a;
+    --on-primary: #14213d;
+    --subtle: #1f2e50;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-subtle: var(--subtle);
+  /* Geist ສຳລັບຕົວອັກສອນລາຕິນ, Noto Sans Lao ສຳລັບຕົວອັກສອນລາວ */
+  --font-sans: var(--font-geist-sans), var(--font-noto-lao), sans-serif;
+  --font-mono: var(--font-geist-mono), var(--font-noto-lao), monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }

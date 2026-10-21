@@ -4,9 +4,10 @@
  * ເປົ້າໝາຍ: ເຂົ້າໃຈວ່າເປັນຫຍັງຕ້ອງແບ່ງເອກະສານເປັນ chunk ແລະ chunkSize/overlap ມີຜົນແນວໃດ
  * ທຽບກັບ project: src/app/api/document_loader_embeding_pgvector/text_csv_pdf_docx/route.ts
  *
- * ຮັນ: pnpm lab:1
+ * ຮັນ: pnpm lab:1  (ບໍ່ຕ້ອງໃຊ້ API key — ທຸກຢ່າງເຮັດໃນເຄື່ອງ)
  */
-import { loadDocuments, splitDocuments, preview } from './lib.ts';
+// import ຈາກ core.ts ໂດຍກົງ ບໍ່ຜ່ານ lib.ts ເພາະ lib.ts ບັງຄັບໃຫ້ມີ OPENROUTER_API_KEY
+import { loadDocuments, splitDocuments, preview } from './core.ts';
 
 const docs = await loadDocuments();
 console.log(`📄 ໂຫຼດ ${docs.length} ເອກະສານ:`);

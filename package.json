@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "lab:1": "node --env-file=.env labs/01-chunking.ts",
+    "lab:1": "node labs/01-chunking.ts",
     "lab:2": "node --env-file=.env labs/02-embeddings.ts",
     "lab:3": "node --env-file=.env labs/03-vector-search.ts",
     "lab:4": "node --env-file=.env labs/04-rag-chain.ts",

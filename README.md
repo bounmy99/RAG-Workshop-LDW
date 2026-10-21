@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **ຜູ້ຮຽນ** | ນັກພັດທະນາທີ່ຂຽນ JavaScript/TypeScript ໄດ້ ແຕ່ຍັງບໍ່ເຄີຍເຮັດ RAG |
-| **ໄລຍະເວລາ** | ເຄິ່ງມື້ (~3.5 ຊົ່ວໂມງ) |
+| **ໄລຍະເວລາ** | ເຄິ່ງມື້ (1 ຊົ່ວໂມງ) |
 | **ຜົນທີ່ໄດ້** | ສ້າງ RAG pipeline ເອງໄດ້ຕັ້ງແຕ່ chunk → embed → search → generate ແລະ ອ່ານ RAG graph ຂອງ project ຈິງເຂົ້າໃຈ |
 
 ---
@@ -35,9 +35,11 @@
 
 ```bash
 pnpm install
-cp .env.example .env      # ແລ້ວໃສ່ OPENROUTER_API_KEY ຂອງທ່ານ
-pnpm lab:1                # ທົດລອງຮັນ lab ທຳອິດ
+pnpm lab:1                # Lab 1 ບໍ່ຕ້ອງໃຊ້ key — ເລີ່ມໄດ້ເລີຍ
+cp .env.example .env      # ແລ້ວໃສ່ OPENROUTER_API_KEY ຂອງທ່ານ (ຕ້ອງໃຊ້ຕັ້ງແຕ່ Lab 2)
 ```
+
+> 💡 Lab 1 (Load & Chunk) ເຮັດໃນເຄື່ອງທັງໝົດ ບໍ່ເອີ້ນ API ໃດໆ. ຕັ້ງແຕ່ Lab 2 ຈຶ່ງຕ້ອງໃຊ້ key ເພາະເລີ່ມສ້າງ embedding ແລະ ເອີ້ນ LLM ຜ່ານ OpenRouter.
 
 > ⚠️ ຫ້າມ commit `.env` — ມັນຖືກ ignore ໄວ້ແລ້ວໃນ `.gitignore`
 
@@ -45,6 +47,21 @@ pnpm lab:1                # ທົດລອງຮັນ lab ທຳອິດ
 |---|---|
 | `pnpm lab:1` … `pnpm lab:5` | ຮັນ lab ແຕ່ລະບົດ (lab 3-5 ຮັບຄຳຖາມໄດ້ ເຊັ່ນ `pnpm lab:4 "ຄຳຖາມ"`) |
 | `pnpm typecheck:labs` | ກວດ TypeScript ຂອງ lab |
+| `pnpm dev` | ເປີດໜ້າແຊັດ **RAG Workshop Playground** ທີ່ http://localhost:3000 |
+
+### ໜ້າແຊັດ (Playground)
+
+ທຸກ lab ທົດລອງຜ່ານໜ້າເວັບໄດ້ ໂດຍບໍ່ຕ້ອງຮັນ CLI. ເລືອກ lab ທາງຊ້າຍ, ປັບຄ່າ (chunkSize, top-k, minScore, ກົດກັນ hallucination, maxRetries) ທາງຂວາ, ແລ້ວພິມຄຳຖາມ. ແຕ່ລະຄຳຕອບສະແດງລາຍລະອຽດຂອງຂັ້ນຕອນນັ້ນ:
+
+| Lab | ສິ່ງທີ່ເຫັນໃນໜ້າແຊັດ |
+|---|---|
+| 1 Load & Chunk | chunk ທັງໝົດ ພ້ອມໄຮໄລ້ສ່ວນທີ່ຊ້ຳ (overlap) |
+| 2 Embeddings | ຄະແນນ cosine ຂອງແຕ່ລະປະໂຫຍກ (ແກ້ປະໂຫຍກໄດ້ໃນແຖບຕັ້ງຄ່າ) |
+| 3 Vector Search | top-k chunk ພ້ອມຄະແນນ ແລະ chunk ທີ່ຖືກຕັດດ້ວຍ minScore |
+| 4 RAG | ຄຳຕອບ + chunk ທີ່ໃຊ້ + prompt ເຕັມທີ່ສົ່ງໃຫ້ LLM |
+| 5 Corrective RAG | ລຳດັບ node ທີ່ທຳງານ (retrieve → grade → transform → generate) |
+
+ໜ້າແຊັດ ແລະ CLI lab ໃຊ້ code ຊຸດດຽວກັນໃນ [labs/core.ts](labs/core.ts). Pipeline ຂອງໜ້າແຊັດຢູ່ໃນ [lib/rag/pipeline.ts](lib/rag/pipeline.ts) ເຊິ່ງຂຽນຕາມ lab 1-5 ແລະ ເກັບ vector store ໄວ້ໃນ memory ຂອງ server (embed ໃໝ່ສະເພາະເມື່ອປ່ຽນ chunkSize/overlap).
 
 > 💡 code ຂອງ project ຈິງທີ່ອ້າງເຖິງໃນຄູ່ມືນີ້ ຢູ່ໃນ repo [Langchang-chatbot](https://github.com/bounmy99/Langchang-chatbot) (branch `dev`)
 
@@ -91,19 +108,6 @@ labs/
 ② Query (ທຸກຄັ້ງທີ່ຜູ້ໃຊ້ຖາມ)
    ຄຳຖາມ ─► Embed ─► ຄົ້ນຫາ top-k ─► ແນບເຂົ້າ prompt ─► LLM ─► ຄຳຕອບ + ແຫຼ່ງອ້າງອີງ
 ```
-
-### ທຽບກັບ project ນີ້
-
-| ຂັ້ນຕອນ | ໄຟລ໌ໃນ project | ໃນ workshop |
-|---|---|---|
-| Load + Clean + Chunk + Embed | [`src/app/api/document_loader_embeding_pgvector/text_csv_pdf_docx/route.ts`](https://github.com/bounmy99/Langchang-chatbot/blob/dev/src/app/api/document_loader_embeding_pgvector/text_csv_pdf_docx/route.ts), [`src/app/api/document_loader_embedding_pinecone/route.ts`](https://github.com/bounmy99/Langchang-chatbot/blob/dev/src/app/api/document_loader_embedding_pinecone/route.ts) | Lab 1, `lib.ts` |
-| ຕັ້ງຄ່າ LLM / Embedding model | [`src/lib/llm-pool.ts`](https://github.com/bounmy99/Langchang-chatbot/blob/dev/src/lib/llm-pool.ts) | `lib.ts` |
-| Vector store | [`src/lib/pinecone.ts`](https://github.com/bounmy99/Langchang-chatbot/blob/dev/src/lib/pinecone.ts), pgvector (`match_documents`) | `MemoryVectorStore` |
-| Retrieve + Query expansion + Rerank | [`src/app/api/chat_rag_tool_calling/graph/retriever.ts`](https://github.com/bounmy99/Langchang-chatbot/blob/dev/src/app/api/chat_rag_tool_calling/graph/retriever.ts) | Lab 3 |
-| Generate | [`.../graph/nodes-generation.ts`](https://github.com/bounmy99/Langchang-chatbot/blob/dev/src/app/api/chat_rag_tool_calling/graph/nodes-generation.ts) | Lab 4 |
-| Grade / Transform (CRAG) | [`.../graph/nodes-retrieval.ts`](https://github.com/bounmy99/Langchang-chatbot/blob/dev/src/app/api/chat_rag_tool_calling/graph/nodes-retrieval.ts), [`.../graph/workflow.ts`](https://github.com/bounmy99/Langchang-chatbot/blob/dev/src/app/api/chat_rag_tool_calling/graph/workflow.ts) | Lab 5 |
-
----
 
 ## Lab 1 — Load & Chunk
 
@@ -260,62 +264,11 @@ START → retrieve → grade ─(ກ່ຽວ)───────────�
 💬 ຂໍອະໄພ, ບໍ່ພົບຂໍ້ມູນນີ້ໃນເອກະສານ.
 ```
 
-### Code walkthrough: graph ຂອງ project ຈິງ
-
-ເປີດ [`src/app/api/chat_rag_tool_calling/graph/workflow.ts`](https://github.com/bounmy99/Langchang-chatbot/blob/dev/src/app/api/chat_rag_tool_calling/graph/workflow.ts) ທຽບກັບ Lab 5:
-
-```text
-START → validate ─(ບໍ່ຜ່ານ)→ generate (ຕອບປະຕິເສດຢ່າງສຸພາບ)
-           └─(ຜ່ານ)→ contextualize → router ─┬→ generate      (ທັກທາຍ / ບໍ່ຕ້ອງຄົ້ນ)
-                                            ├→ ministries ──→ generate
-                                            ├→ services ────→ generate
-                                            └→ retrieve → grade ─┬→ generate → END
-                                                    ↑            ├→ transform ─┘(ວົນ)
-                                                    └────────────┘
-                                                                 └→ grounding → END (ຄົບ max retries → ຄົ້ນເວັບ)
-```
-
-| Node ໃນ project | ໜ້າທີ່ | ມີໃນ Lab 5 ບໍ່? |
-|---|---|---|
-| `validate` | ກັນຄຳຖາມອັນຕະລາຍ / jailbreak / ນອກເລື່ອງ | ❌ (ແບບຝຶກຫັດ 5.2) |
-| `contextualize` | ຂຽນຄຳຖາມຕໍ່ເນື່ອງ ("ຂໍເອກະສານ") ເປັນຄຳຖາມສົມບູນຈາກປະຫວັດແຊັດ | ❌ |
-| `router` | ຕັດສິນວ່າຕ້ອງຄົ້ນເອກະສານ, ດຶງລາຍຊື່ກະຊວງ, ຫຼື ຕອບເລີຍ | ❌ |
-| `retrieve` | query expansion → ຄົ້ນ Pinecone → rerank ດ້ວຍ LLM | ✅ (ແບບງ່າຍ) |
-| `grade` | ກວດຄວາມກ່ຽວຂ້ອງ + fast-path ຖ້າ score ≥ 0.72 | ✅ |
-| `transform` | ຂຽນຄຳຄົ້ນໃໝ່ | ✅ |
-| `generate` | ຕອບຈາກ context | ✅ |
-| `grounding` | fallback ໄປຄົ້ນຫາເວັບ | ❌ |
-
 **ແບບຝຶກຫັດ**
 
 - **5.1** ຖາມອ້ອມໆ ເຊັ່ນ "ຖ້າໂນດບຸກຫາຍ ຕ້ອງເຮັດແນວໃດ?" → ມີ transform ບໍ່? ຄຳຄົ້ນໃໝ່ດີກວ່າເກົ່າບໍ່?
 - **5.2** ເພີ່ມ node `validate` ກ່ອນ `retrieve` ທີ່ປະຕິເສດຄຳຖາມນອກເລື່ອງ HR/IT (ເຊັ່ນ "ສອນເຮັດເຂົ້າໜົມແດ່") ໂດຍໄປ `END` ທັນທີ
 - **5.3** ສັງເກດວ່າ grade ໃນ Lab 5 ເອີ້ນ LLM **ທຸກຄັ້ງ**. ເພີ່ມ fast-path ແບບ project: ຖ້າ score ສູງສຸດ ≥ 0.75 ໃຫ້ຖືວ່າກ່ຽວເລີຍ (ຄຳໃບ້: ໃຊ້ `similaritySearchWithScore` ແລະ ເກັບ score ໃນ state)
-
----
-
-## 6. ຈາກ Workshop ສູ່ Production
-
-ສິ່ງທີ່ project ຈິງເຮັດເພີ່ມ ແລະ ເຫດຜົນ:
-
-| ເຕັກນິກ | ຢູ່ໃສ | ແກ້ບັນຫາຫຍັງ |
-|---|---|---|
-| **Query expansion** — ໃຫ້ LLM ສ້າງຄຳຄົ້ນສຳຮອງ 3 ແບບ | `retriever.ts` | ຄຳຖາມຜູ້ໃຊ້ສັ້ນ/ກຳກວມ ຄົ້ນຫາບໍ່ເຈີ |
-| **Rerank ດ້ວຍ LLM** — ດຶງ 20-100 chunk ແລ້ວໃຫ້ LLM ໃຫ້ຄະແນນ 0-10 | `retriever.ts` | vector score ບໍ່ສະທ້ອນຄວາມກ່ຽວຂ້ອງແທ້ສະເໝີ |
-| **Metadata filter** — ກອງຕາມກະຊວງ/ບໍລິການ | `retriever.ts` | ຄົ້ນເຈີເອກະສານຂອງໜ່ວຍງານອື່ນ |
-| **Contextualize** — ຂຽນຄຳຖາມໃໝ່ຈາກປະຫວັດແຊັດ | `nodes-context.ts` | "ແລ້ວອັນນັ້ນເດ?" ຄົ້ນຫາບໍ່ໄດ້ |
-| **Cache** — query cache + embedding cache | `query-cache`, `createCachedEmbeddings` | ຄ່າໃຊ້ຈ່າຍ ແລະ ຄວາມໄວ |
-| **Input validation** | `nodes-validation.ts` | prompt injection, ຄຳຖາມອັນຕະລາຍ |
-| **Web grounding** | `generateAnswer` / `grounding` | ຂໍ້ມູນພາຍໃນບໍ່ພໍ |
-| **Streaming** | `route.ts` | ຜູ້ໃຊ້ບໍ່ຕ້ອງລໍຖ້າຄຳຕອບທັງໝົດ |
-
-### ບົດຮຽນທີ່ project ຈ່າຍຄ່າຮຽນມາແລ້ວ (ອ່ານ comment ໃນ `src/lib/llm-pool.ts`)
-
-1. **Embedding model ຕ້ອງຄືກັນທຸກບ່ອນ** — ຈຶ່ງມີ `getEmbeddings()` ບ່ອນດຽວ ຫ້າມ `new OpenAIEmbeddings()` ບ່ອນອື່ນ
-2. **`encodingFormat: 'float'`** — Google embedding ຜ່ານ OpenRouter ປະຕິເສດ base64 ດ້ວຍ HTTP 400
-3. **ຕ້ອງລະບຸ `maxTokens` ສະເໝີ** — ບໍ່ດັ່ງນັ້ນ OpenRouter ຈອງ credit ເທົ່າ max output ຂອງ model ແລ້ວຕອບ HTTP 402
-4. **Cache embedding ສຳລັບ query ເທົ່ານັ້ນ** ບໍ່ແມ່ນຕອນ ingest
-5. **Router ເດົາຜິດ ຢ່າຖິ້ມຄຳຖາມ** — ຖ້າ filter ທີ່ເດົາບໍ່ເຈີໄຟລ໌ ໃຫ້ຄົ້ນທົ່ວແທນ (`filterIsGuess` ໃນ `retriever.ts`)
 
 ---
 
